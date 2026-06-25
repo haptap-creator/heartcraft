@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartCraft Clone - Digital Gifts</title>
+    <style>
+        :root {
+            --primary: #ff477e;
+            --primary-hover: #ff2a63;
+            --background: #fff0f3;
+            --text: #4a0e17;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #ffe3e8;
+            border-radius: 25px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(255, 71, 126, 0.15);
+            text-align: center;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        p {
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: #666;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.3);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* --- Tool: Proposal --- */
+        .proposal-box {
+            position: relative;
+            min-height: 200px;
+            margin-top: 20px;
+        }
+
+        #btn-no {
+            position: absolute;
+            background: #94a3b8;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* --- Tool: Puzzle --- */
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+            justify-content: center;
+            margin: 20px auto;
+            background: #ddd;
+            padding: 4px;
+            border-radius: 10px;
+            width: 308px;
+            height: 308px;
+        }
+
+        .puzzle-piece {
+            background-image: url('https://picsum.photos/300/300');
+            background-size: 300px 300px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        /* Celebration Overlay */
+        .overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .overlay h2 { color: var(--primary); font-size: 2.2rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>HeartCraft ✨</h1>
+        <p>Interactive digital gifts for people you love</p>
+    </header>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('proposal')">Proposal</button>
+            <button class="tab-btn" onclick="switchTab('puzzle')">Photo Puzzle</button>
+        </div>
+
+        <div id="proposal" class="card active">
+            <h2>The "Unrejectable" Card 💍</h2>
+            <p>Will you go out on a date with me this weekend?</p>
+            
+            <div class="proposal-box">
+                <button id="btn-yes" class="btn" onclick="celebrateProposal()">Yes!</button>
+                <button id="btn-no" class="btn" onmouseover="dodgeButton()" onclick="dodgeButton()">No</button>
+            </div>
+
+            <div id="proposal-success" class="overlay">
+                <h2>YAY! 🎉</h2>
+                <p style="font-size: 1.2rem; margin-top: 15px;">It's a date! I knew you couldn't say no. ❤️</p>
+                <button class="btn" style="margin-top: 20px;" onclick="resetProposal()">Reset</button>
+            </div>
+        </div>
+
+        <div id="puzzle" class="card">
+            <h2>Secret Photo Puzzle 🧩</h2>
+            <p>Unscramble the picture to reveal your hidden message!</p>
+            
+            <div class="puzzle-container" id="puzzle-board"></div>
+
+            <div id="puzzle-success" class="overlay">
+                <h2>Solved! 🌟</h2>
+                <p style="font-size: 1.3rem; margin-top: 15px; font-weight: bold; color: var(--primary);">
+                    "You are my absolute favorite person!"
+                </p>
+                <button class="btn" style="margin-top: 20px;" onclick="initPuzzle()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (tabId === 'puzzle') {
+                initPuzzle();
+            }
+        }
+
+        // --- Proposal Logic ---
+        const noBtn = document.getElementById('btn-no');
+        
+        function dodgeButton() {
+            const container = document.querySelector('.proposal-box');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+
+            // Calculate random positions within bounding limits
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = containerRect.height - btnRect.height;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function celebrateProposal() {
+            document.getElementById('proposal-success').style.display = 'flex';
+        }
+
+        function resetProposal() {
+            document.getElementById('proposal-success').style.display = 'none';
+            noBtn.style.left = 'auto';
+            noBtn.style.top = 'auto';
+        }
+
+        // --- Puzzle Logic ---
+        let pieces = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        let correctOrder = [...pieces];
+
+        function initPuzzle() {
+            document.getElementById('puzzle-success').style.display = 'none';
+            // Shuffle pieces but ensure it's not solved initially
+            do {
+                pieces.sort(() => Math.random() - 0.5);
+            } while (isSolved());
+
+            renderPuzzle();
+        }
+
+        function renderPuzzle() {
+            const board = document.getElementById('puzzle-board');
+            board.innerHTML = '';
+            
+            pieces.forEach((pieceIdx, currentPos) => {
+                const piece = document.createElement('div');
+                piece.className = 'puzzle-piece';
+                
+                // Calculate background slice position based on original index
+                const x = (pieceIdx % 3) * 100;
+                const y = Math.floor(pieceIdx / 3) * 100;
+                piece.style.backgroundPosition = `-${x}px -${y}px`;
+                
+                // Handle swap mechanics on click
+                piece.onclick = () => selectPiece(currentPos);
+                board.appendChild(piece);
+            });
+        }
+
+        let firstSelection = null;
+
+        function selectPiece(position) {
+            if (firstSelection === null) {
+                firstSelection = position;
+                document.getElementById('puzzle-board').children[position].style.outline = '3px solid var(--primary)';
+            } else {
+                // Swap array items
+                let temp = pieces[firstSelection];
+                pieces[firstSelection] = pieces[position];
+                pieces[position] = temp;
+                
+                firstSelection = null;
+                renderPuzzle();
+                
+                if (isSolved()) {
+                    setTimeout(() => {
+                        document.getElementById('puzzle-success').style.display = 'flex';
+                    }, 300);
+                }
+            }
+        }
+
+        function isSolved() {
+            return pieces.every((val, i) => val === correctOrder[i]);
+        }
+    </script>
+</body>
+</html>
